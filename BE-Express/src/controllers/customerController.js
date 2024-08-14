@@ -1,5 +1,6 @@
 const { Op } = require('sequelize');
 const { Customer } = require('../models');
+const multer = require('multer');
 
 exports.getAllCustomers = async (req, res) => {
     try {
@@ -18,19 +19,19 @@ exports.getAllCustomers = async (req, res) => {
 
         if (nama) {
             whereClause.nama = {
-                [Op.like]: `%${nama}%`
+                [Op.iLike]: `%${nama}%`
             };
         }
 
         if (alamat) {
             whereClause.alamat = {
-                [Op.like]: `%${alamat}%`
+                [Op.iLike]: `%${alamat}%`
             };
         }
 
         if (kota) {
             whereClause.kota = {
-                [Op.like]: `%${kota}%`
+                [Op.iLike]: `%${kota}%`
             };
         }
 
@@ -47,14 +48,22 @@ exports.getAllCustomers = async (req, res) => {
 
         const pageOffset = (pageNumber - 1) * pageSizeNumber;
 
+        const totalRecords = await Customer.count({ where: whereClause });
+
         const customers = await Customer.findAll({
             where: whereClause,
             order: [[sortField, sortOrder]],
             offset: pageOffset,
-            limit: pageSizeNumber   
+            limit: pageSizeNumber
         });
 
-        res.json(customers);
+        res.json({
+            data: customers,
+            totalRecords: totalRecords,
+            currentPage: pageNumber,
+            pageSize: pageSizeNumber,
+            totalPages: Math.ceil(totalRecords / pageSizeNumber)
+        });
     } catch (error) {
         res.status(500).json({ error: 'Internal server error' });
     }
@@ -86,3 +95,96 @@ const parseSort = (sort) => {
             return ['nama', 'ASC'];
     }
 };
+
+const upload = multer();
+
+exports.addCustomer = [
+    upload.none(),
+    async (req, res) => {
+        try {
+            const { nama, alamat, kota } = req.body;
+
+            const errorBlank = [];
+
+            if (!nama) {
+                errorBlank.push('nama cannot be blank');
+            }
+            if (!alamat) {
+                errorBlank.push('alamat cannot be blank');
+            }
+            if (!kota) {
+                errorBlank.push('kota cannot be blank');
+            }
+
+            if (errorBlank.length > 0) {
+                return res.status(400).json({ error: errorBlank });
+            }
+
+            const totalCustomers = await Customer.max('no');
+            const newNo = totalCustomers ? totalCustomers + 1 : 1;
+
+            const customer = await Customer.create({
+                no: newNo,
+                nama,
+                alamat,
+                kota
+            });
+
+            res.status(201).json({
+                message: 'Customer added successfully',
+                data: customer
+            });
+        } catch (error) {
+            res.status(500).json({ error: 'Internal server error' });
+        }
+    }
+];
+
+exports.updateCustomer = [
+    upload.none(),
+    async (req, res) => {
+        try {
+            const { id } = req.params;
+            const { nama, alamat, kota } = req.body;
+
+            const customer = await Customer.findByPk(id);
+            if (!customer) {
+                return res.status(404).json({ error: 'Customer not found' });
+            }
+
+            if (nama) {
+                customer.nama = nama;
+            }
+            if (alamat) {
+                customer.alamat = alamat;
+            }
+            if (kota) {
+                customer.kota = kota;
+            }
+
+            customer.updatedat = new Date();
+
+            await customer.save();
+            res.status(200).json({
+                message: 'Customer updated successfully',
+                data: customer
+            });
+        } catch (error) {
+            res.status(500).json({ error: 'Internal server error' });
+        }
+    }
+]
+
+exports.deleteCustomer = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const customer = await Customer.findByPk(id);
+        if (!customer) {
+            return res.status(404).json({ error: 'Customer not found' });
+        }
+        await customer.destroy();
+        res.status(200).json({ message: 'Customer deleted successfully' });
+    } catch (error) {
+        res.status(500).json({ error: 'Internal server error' });
+    }
+}
