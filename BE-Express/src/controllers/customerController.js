@@ -84,13 +84,13 @@ const parseSort = (sort) => {
         case 'kotaDesc':
             return ['kota', 'DESC'];
         case 'recentCreated':
-            return ['createdAt', 'DESC'];
+            return ['created_at', 'DESC'];
         case 'oldestCreated':
-            return ['createdAt', 'ASC'];
+            return ['created_at', 'ASC'];
         case 'recentUpdated':
-            return ['updatedAt', 'DESC'];
+            return ['updated_at', 'DESC'];
         case 'oldestUpdated':
-            return ['updatedAt', 'ASC'];
+            return ['updated_at', 'ASC'];
         default:
             return ['nama', 'ASC'];
     }
@@ -162,7 +162,7 @@ exports.updateCustomer = [
                 customer.kota = kota;
             }
 
-            customer.updatedat = new Date();
+            customer.updated_at = new Date();
 
             await customer.save();
             res.status(200).json({
