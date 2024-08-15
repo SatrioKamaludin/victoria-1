@@ -5,7 +5,7 @@ const multer = require('multer');
 exports.getAllCustomers = async (req, res) => {
     try {
         const {
-            sort = 'namaAsc',
+            sort = '',
             nama = '',
             alamat = '',
             kota = '',
@@ -14,27 +14,7 @@ exports.getAllCustomers = async (req, res) => {
         } = req.query;
 
         const [sortField, sortOrder] = parseSort(sort);
-
-        const whereClause = {};
-
-        if (nama) {
-            whereClause.nama = {
-                [Op.iLike]: `%${nama}%`
-            };
-        }
-
-        if (alamat) {
-            whereClause.alamat = {
-                [Op.iLike]: `%${alamat}%`
-            };
-        }
-
-        if (kota) {
-            whereClause.kota = {
-                [Op.iLike]: `%${kota}%`
-            };
-        }
-
+        const searchClause = buildSearchClause(nama, alamat, kota);
         const pageNumber = parseInt(page);
         const pageSizeNumber = parseInt(pageSize);
 
@@ -48,10 +28,10 @@ exports.getAllCustomers = async (req, res) => {
 
         const pageOffset = (pageNumber - 1) * pageSizeNumber;
 
-        const totalRecords = await Customer.count({ where: whereClause });
+        const totalRecords = await Customer.count({ where: searchClause });
 
         const customers = await Customer.findAll({
-            where: whereClause,
+            where: searchClause,
             order: [[sortField, sortOrder]],
             offset: pageOffset,
             limit: pageSizeNumber
@@ -96,6 +76,30 @@ const parseSort = (sort) => {
     }
 };
 
+const buildSearchClause = (nama, alamat, kota) => {
+    const searchClause = {};
+
+    if (nama) {
+        searchClause.nama = {
+            [Op.iLike]: `%${nama}%`
+        };
+    }
+
+    if (alamat) {
+        searchClause.alamat = {
+            [Op.iLike]: `%${alamat}%`
+        };
+    }
+
+    if (kota) {
+        searchClause.kota = {
+            [Op.iLike]: `%${kota}%`
+        };
+    }
+
+    return searchClause;
+};
+
 const upload = multer();
 
 exports.addCustomer = [
@@ -127,7 +131,9 @@ exports.addCustomer = [
                 no: newNo,
                 nama,
                 alamat,
-                kota
+                kota,
+                created_at: new Date(),
+                updated_at: new Date()
             });
 
             res.status(201).json({
@@ -149,7 +155,11 @@ exports.updateCustomer = [
 
             const customer = await Customer.findByPk(id);
             if (!customer) {
-                return res.status(404).json({ error: 'Customer not found' });
+                return res.status(404).json({
+                    message: 'Customer not found',
+                    error: 'Not Found',
+                    statusCode: 404
+                });
             }
 
             if (nama) {
@@ -180,7 +190,11 @@ exports.deleteCustomer = async (req, res) => {
         const { id } = req.params;
         const customer = await Customer.findByPk(id);
         if (!customer) {
-            return res.status(404).json({ error: 'Customer not found' });
+            return res.status(404).json({
+                message: 'Customer not found',
+                error: 'Not Found',
+                statusCode: 404
+            });
         }
         await customer.destroy();
         res.status(200).json({ message: 'Customer deleted successfully' });
