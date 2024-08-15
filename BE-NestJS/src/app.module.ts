@@ -17,6 +17,7 @@ import { ConfigModule } from '@nestjs/config';
       username: process.env.DB_USER,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_NAME,
+      timezone: 'Asia/Jakarta',
       models: [Customer],
       autoLoadModels: true,
       synchronize: false, //Hindari override tabel di database
