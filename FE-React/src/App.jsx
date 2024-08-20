@@ -4,7 +4,6 @@ import CustomerTable from './components/customerTable'
 const App = () => {
     return (
         <div>
-            <h1>Customer List</h1>
             <CustomerTable />
         </div>
     );

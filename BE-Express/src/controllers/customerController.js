@@ -51,6 +51,10 @@ exports.getAllCustomers = async (req, res) => {
 
 const parseSort = (sort) => {
     switch (sort) {
+        case 'noAsc':
+            return ['no', 'ASC'];
+        case 'noDesc':
+            return ['no', 'DESC'];
         case 'namaAsc':
             return ['nama', 'ASC'];
         case 'namaDesc':
@@ -72,7 +76,7 @@ const parseSort = (sort) => {
         case 'oldestUpdated':
             return ['updated_at', 'ASC'];
         default:
-            return ['nama', 'ASC'];
+            return ['no', 'ASC'];
     }
 };
 
