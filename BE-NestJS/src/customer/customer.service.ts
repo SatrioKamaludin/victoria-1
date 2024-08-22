@@ -53,6 +53,12 @@ export class CustomerService {
         const order: [string, 'ASC' | 'DESC'][] = [];
 
         switch (sort) {
+            case 'noAsc':
+                order.push(['no', 'ASC']);
+                break;
+            case 'noDesc':
+                order.push(['no', 'DESC']);
+                break;
             case 'namaAsc':
                 order.push(['nama', 'ASC']);
                 break;
