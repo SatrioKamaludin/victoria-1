@@ -72,21 +72,21 @@ pipeline {
                 stage('Start BE-Express') {
                     steps {
                         dir('BE-Express') {
-                            bat 'npm start'
+                            bat 'start /B npm start'
                         }
                     }
                 }
                 stage('Start BE-NestJS') {
                     steps {
                         dir('BE-NestJS') {
-                            bat 'npm start'
+                            bat 'start /B npm start'
                         }
                     }
                 }
                 stage('Start FE-React') {
                     steps {
                         dir('FE-React') {
-                            bat 'npm run preview'
+                            bat 'start /B npm run preview'
                         }
                     }
                 }
