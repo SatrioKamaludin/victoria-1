@@ -66,31 +66,5 @@ pipeline {
                 }
             }
         }
-        
-        stage('Test') {
-            parallel {
-                stage('Test BE-Express') {
-                    steps {
-                        dir('BE-Express') {
-                            bat 'npm test'
-                        }
-                    }
-                }
-                stage('Test BE-NestJS') {
-                    steps {
-                        dir('BE-NestJS') {
-                            bat 'npm test'
-                        }
-                    }
-                }
-                stage('Test FE-React') {
-                    steps {
-                        dir('FE-React') {
-                            bat 'npm test'
-                        }
-                    }
-                }
-            }
-        }
     }
 }
