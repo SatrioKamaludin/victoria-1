@@ -66,5 +66,31 @@ pipeline {
                 }
             }
         }
+
+        stage('Start Applications') {
+            parallel {
+                stage('Start BE-Express') {
+                    steps {
+                        dir('BE-Express') {
+                            bat 'npm start'
+                        }
+                    }
+                }
+                stage('Start BE-NestJS') {
+                    steps {
+                        dir('BE-NestJS') {
+                            bat 'npm start'
+                        }
+                    }
+                }
+                stage('Start FE-React') {
+                    steps {
+                        dir('FE-React') {
+                            bat 'npm run preview'
+                        }
+                    }
+                }
+            }
+        }
     }
 }
