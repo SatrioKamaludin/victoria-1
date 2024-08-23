@@ -20,21 +20,21 @@ pipeline {
                 stage('Install BE-Express') {
                     steps {
                         dir('BE-Express') {
-                            sh 'npm install'
+                            bat 'npm install'
                         }
                     }
                 }
                 stage('Install BE-NestJS') {
                     steps {
                         dir('BE-NestJS') {
-                            sh 'npm install'
+                            bat 'npm install'
                         }
                     }
                 }
                 stage('Install FE-React') {
                     steps {
                         dir('FE-React') {
-                            sh 'npm install'
+                            bat 'npm install'
                         }
                     }
                 }
@@ -46,21 +46,21 @@ pipeline {
                 stage('Build BE-Express') {
                     steps {
                         dir('BE-Express') {
-                            sh 'npm run build'
+                            bat 'npm run build'
                         }
                     }
                 }
                 stage('Build BE-NestJS') {
                     steps {
                         dir('BE-NestJS') {
-                            sh 'npm run build'
+                            bat 'npm run build'
                         }
                     }
                 }
                 stage('Build FE-React') {
                     steps {
                         dir('FE-React') {
-                            sh 'npm run build'
+                            bat 'npm run build'
                         }
                     }
                 }
@@ -72,21 +72,21 @@ pipeline {
                 stage('Test BE-Express') {
                     steps {
                         dir('BE-Express') {
-                            sh 'npm test'
+                            bat 'npm test'
                         }
                     }
                 }
                 stage('Test BE-NestJS') {
                     steps {
                         dir('BE-NestJS') {
-                            sh 'npm test'
+                            bat 'npm test'
                         }
                     }
                 }
                 stage('Test FE-React') {
                     steps {
                         dir('FE-React') {
-                            sh 'npm test'
+                            bat 'npm test'
                         }
                     }
                 }
