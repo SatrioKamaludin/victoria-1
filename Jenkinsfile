@@ -1,5 +1,19 @@
 pipeline {
     agent any
+
+    environment {
+        // Environment variables for BE-Express and BE-NestJS
+        DB_HOST = 'localhost'
+        DB_PORT = '5432'
+        DB_USER = 'postgres'
+        DB_PASSWORD = 'admin'
+        DB_NAME = 'victoria'
+
+        // Environment variables for FE-React
+        VITE_API_EXPRESS = 'http://localhost:3000/api'
+        VITE_API_NESTJS = 'http://localhost:3001/api'
+    }
+
     stages {
         stage('Install Dependencies - BE - Express') {
             steps {
